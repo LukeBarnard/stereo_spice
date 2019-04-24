@@ -15,9 +15,9 @@ Example::
     >>> t = Time(['2010-01-01T12:00:00']):
     >>> print "Date: {}".format(time.isot)
     >>> for system in ['HCI', 'CARRINGTON', 'HEEQ', 'HEE', 'HAE']:
-    >>>     stb = X.get_lonlat(time, 'stb', system, precess=False)
-    >>>     ert = X.get_lonlat(time, 'earth', system, precess=False)
-    >>>     sta = X.get_lonlat(time, 'sta', system, precess=False)    
+    >>>     stb = spice.get_lonlat(time, 'stb', system, precess=False)
+    >>>     ert = spice.get_lonlat(time, 'earth', system, precess=False)
+    >>>     sta = spice.get_lonlat(time, 'sta', system, precess=False)    
     >>>     print "{0} Longitude>> stb:{1:5.3f}  ert:{2:5.3f}  sta:{3:5.3f}".format(system, stb[1], ert[1], sta[1])
     >>>     print "{0} Latitude>> stb:{1:5.3f}  ert:{2:5.3f}  sta:{3:5.3f}".format(system, stb[2], ert[2], sta[2])
     
