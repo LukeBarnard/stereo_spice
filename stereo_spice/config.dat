@@ -1,0 +1,12 @@
+data_root;data
+leap_seconds;data\gen\naif0011.tls
+solar_system;data\gen\de405.bsp
+planet_constants;data\gen\pck00010.tpc
+heliospheric_frames;data\gen\heliospheric.tf
+stereo_frames;data\gen\stereo_rtn.tf
+sta_clock;data\sclk\ahead\ahead_science_08.sclk
+stb_clock;data\sclk\behind\behind_science_08.sclk
+sta_def_ephem_filelist;data\definitive_ephemerides_ahead.dat
+stb_def_ephem_filelist;data\definitive_ephemerides_behind.dat
+sta_ephem_filelist;data\ephemerides_ahead.dat
+stb_ephem_filelist;data\ephemerides_behind.dat

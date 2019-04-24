@@ -1,0 +1,188 @@
+KPL/SCLK
+
+STEREO-BEHIND Science Spacecraft Clock Kernel (SCLK)
+===========================================================================
+
+     This file is a SPICE spacecraft clock (SCLK) kernel containing
+     information required for time conversions involving the on-board
+     STEREO-BEHIND spacecraft clock.
+
+     NOTE: Times prior to Jan 1, 2004 (TDT) are not guaranteed accurate.
+           They are included for time offset calculations only.
+ 
+Version
+--------------------------------------------------------
+
+     STEREO-BEHIND Science SCLK Kernel Version:
+
+     Version 0.1 -- September 16, 2004 -- Deane Sibol
+
+        This kernel is static and will only be updated for leap seconds.
+        The SCLK value is based on the raw STEREO_UTC reported from the
+        spacecraft.  The clock rate assumes no drift from the parallel
+        time system (TDT). Clock drift rate will be accounted for in the
+        UTCF which is applied on the spacecraft to yield STEREO_UTC.
+        The clock coefficients indicate the clock starts on the following
+        epoch:
+
+                   1/1451606400:0                 (SCLK)
+                   01-JAN-2004-00:01:04.184       (TDT) 
+
+        The end of the first partition is currently defined as the value
+        in ticks of the rollover of the spacecraft clock (STEREO_UTC).
+
+     Version 0.2 -- January 03, 2005 -- Deane Sibol
+
+        Allowed for raw STEREO_UTC of zero (0) to be converted to
+        01-01-1958 to allow for pre-flight debugging.
+
+     Version 0.3 -- February 07, 2005 -- Deane Sibol
+
+        Correct TDT of raw STEREO_UTC of zero (0) per Stan Cooper.
+ 
+     Version 0.4 -- April 11, 2005 -- Deane Sibol
+
+        Correct TDT of raw STEREO_UTC of zero (0) (back to that used in
+        Version 0.2) per CR 3028.
+
+     Version 0.5 -- December 22, 2005 -- Paul Lafferty
+
+        Updated to deal with new leap second at end of year.
+
+     Version 0.6 -- November 06, 2008 -- Paul Lafferty
+
+        Updated to deal with new leap second at end of year.
+
+     Version 0.7 -- June 29, 2012 -- Paul Lafferty
+
+        Updated to deal with new leap second at end of mid-year.
+
+     Version 0.8 -- June 19, 2015 -- Paul Lafferty
+
+        Updated to deal with new leap second on July 1st.
+
+Usage
+--------------------------------------------------------
+
+     This file is used by the SPICE system as follows: programs that
+     make use of this SCLK kernel must 'load' the kernel, normally
+     during program initialization.  Loading the kernel associates
+     the data items with their names in a data structure called the
+     'kernel pool'.  The SPICELIB routine FURNSH loads text kernel
+     files, such as this one, into the pool as shown below:
+
+        FORTRAN:
+
+                  CALL FURNSH ( SCLK_kernel_name )
+
+        C:
+
+                  furnsh_c ( SCLK_kernel_name );
+
+     Once loaded, the SCLK time conversion routines will be able to
+     access the necessary data located in this kernel for their 
+     designed purposes.
+
+References
+--------------------------------------------------------
+ 
+         1.   "SCLK Required Reading"
+
+Inquiries
+--------------------------------------------------------
+
+     If you have any questions regarding this file or its usage, 
+     contact:
+
+           Scott Turner
+           (443)778-1693
+           Scott.Turner@jhuapl.edu
+
+Kernel Data
+--------------------------------------------------------
+
+     The first block of keyword equals value assignments define the
+     type, parallel time system, and format of the spacecraft clock.
+
+     The STEREO-BEHIND Science spacecraft clock is represented by the SPICE
+     type 1 SCLK kernel.  It uses TDT, Terrestrial Dynamical Time,
+     as its parallel time system.
+
+        \begindata
+
+        SCLK_KERNEL_ID         = ( @2005-04-11T15:00:00 )
+        SCLK_DATA_TYPE_235     = ( 1 )
+        SCLK01_TIME_SYSTEM_235 = ( 2 ) 
+
+        \begintext
+
+     In a particular partition of the STEREO-BEHIND spacecraft clock,
+     the clock read-out consists of two separate stages:
+
+                           1/17314125:231
+
+     The first stage, a 32 bit field, represents the spacecraft
+     clock seconds count.  The second, an 8 bit field, represents
+     a count of 1/256ths of a second of the spacecraft clock.
+
+     The following keywords and their values establish this structure:
+
+        \begindata
+
+        SCLK01_N_FIELDS_235     = ( 2 )
+        SCLK01_MODULI_235       = ( 4294967296  256 )
+        SCLK01_OFFSETS_235      = (          0    0 )
+        SCLK01_OUTPUT_DELIM_235 = ( 2 )
+
+        \begintext
+
+     This concludes the invariant portion of the SCLK kernel data.  The
+     remaining sections of the kernel may require updates as the clock
+     correlation coefficients evolve in time.  The first section below
+     establishes the clock partitions.  The data in this section consists
+     of two parallel arrays, which denote the start and end values in 
+     ticks of each partition of the spacecraft clock.
+
+     SPICE utilizes these two arrays to map from spacecraft clock ticks,
+     determined with the usual modulo arithmetic, to encoded SCLK--the
+     internal, monotonically increasing sequence used to tag various 
+     data sources with spacecraft clock.
+
+        \begindata
+
+        SCLK_PARTITION_START_235 = ( 0 )
+                                     
+        SCLK_PARTITION_END_235   = ( 1.09951162777500E+12 )
+
+        \begintext
+
+     The remaining section of the SCLK kernel defines the clock correlation
+     coefficients.  Each line contains a 'coefficient triple':
+
+         Encoded SCLK at which Rate is introduced.
+         Corresponding TDT Epoch at which Rate is introduced.
+         Rate in TDT (seconds) / most significant clock count (~seconds).
+
+     In this Science SCLK kernel, the encoded SCLK does -NOT- map to a Mission
+     Elapsed Time (MET).  (For this, see the Operations SCLK kernel.)
+     Instead, the encoded SCLK in this SCLK kernel maps to a representation
+     of STEREO_UTC.
+
+     SPICE uses linear extrapolation to convert between the parallel time
+     system and encoded SCLK.  The triples are stored in the array defined
+     below:
+
+        \begindata
+
+        SCLK01_COEFFICIENTS_235 = ( 
+
+        0                 @01-JAN-1958-00:00:41.184     1.00000000000
+        3.87779788800E+11 @01-JAN-2006-00:01:05.184     1.00000000000
+        4.12021555199E+11 @01-JAN-2009-00:01:05.180     257.000000000
+        4.12021555200E+11 @01-JAN-2009-00:01:06.184     1.00000000000
+        4.40266751999E+11 @01-JUL-2012-00:01:06.180     257.000000000
+        4.40266752000E+11 @01-JUL-2012-00:01:07.184     1.00000000000
+        4.64486399999E+11 @01-JUL-2015-00:01:07.180     257.000000000
+        4.64486400000E+11 @01-JUL-2015-00:01:08.184     1.00000000000
+)        
+        \begintext

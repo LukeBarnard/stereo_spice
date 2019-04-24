@@ -1,0 +1,3 @@
+include README.rst
+include stereo_spice/config.dat
+recursive-include stereo_spice/data *

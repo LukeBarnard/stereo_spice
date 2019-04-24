@@ -1,0 +1,23 @@
+#title
+STEREO Ephemerides and Attitude Histories
+
+#maxentries
+100000
+
+#items
+FILENAME	C*50	Full filename (e.g. "ahead_2006_042_03.epm.bsp")
+FILEPREFIX	C*40	Filename prefix (e.g. "ahead_2006_042")
+VERSION		I*2	Version number (-1 if not found)
+FILETYPE	C*4	"epm", "depm", or "ah"
+SCID		C*1	Either A or B
+START_DATE	R*8     Start time for data within the file
+END_DATE        R*8     End time for data within the file
+MOD_DATE	R*8	File modification date
+FILEPATH	C*50	Relative path within SolarSoft
+VALID		B*1	Either 0 or 1
+ 
+#index
+FILENAME	index
+FILEPREFIX	index
+START_DATE	sort
+MOD_DATE	sort
