@@ -22,7 +22,7 @@ def readme():
     """
     Function to parse the readme file into setup.
     """
-    with open('README.rst') as f:
+    with open('README.md') as f:
         return f.read()
 
 setup(name='stereo_spice',
@@ -36,6 +36,6 @@ setup(name='stereo_spice',
       author_email='l.a.barnard@reading.ac.uk',
       packages=['stereo_spice'],
       package_data={'stereo_spice': data_file_list()},
-      install_requires=['astropy', 'spiceypy', 'numpy', 'os', 'glob'],
+      install_requires=['astropy', 'spiceypy', 'numpy'],
       include_package_data=True,
       zip_safe=False)
