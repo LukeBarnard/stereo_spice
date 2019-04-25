@@ -6,7 +6,8 @@ def data_file_list():
     """
     Construct a list of all the data files, including the vey many SPICE kernals.
     """
-    root_path = os.path.split(os.path.abspath(__file__))
+    split_path = os.path.split(os.path.abspath(__file__))
+    root_path = split_path[0]
     path = os.path.join(root_path, 'stereo_spice')
     data_files = []
     for root, dirnames, filenames in os.walk(path):
@@ -15,9 +16,9 @@ def data_file_list():
             rel_path = os.path.relpath(full_path, path)
             if not rel_path.endswith('py'):
                 data_files.append(rel_path)
+                
+    return data_files
     
-
-
 def readme():
     """
     Function to parse the readme file into setup.
