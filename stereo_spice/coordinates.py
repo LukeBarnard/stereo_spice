@@ -606,8 +606,8 @@ class StereoSpice:
         # If coordinates input as a list, then bung them into an array.
         if isinstance(coord_lat, list):
             if all([isinstance(c, (float, int)) for c in coord_lat]):
-                coord_src = np.array(coord_lat)
-                coord_src = np.squeeze(coord_lat)
+                coord_lat = np.array(coord_lat)
+                coord_lat = np.squeeze(coord_lat)
             else:
                 print("ERROR: coord_src should be a numpy array of coordinates or a list of floats.")
             
@@ -646,11 +646,7 @@ class StereoSpice:
             coord_rec = np.zeros(coord_lat.shape, dtype=float)
             for i in range(n_coords):
                 coord_rec[i,:] = spice.latrec(rad[i], lon[i], lat[i])
-        
-        # Put lon and lat back into degrees
-        if degrees:
-            coord_rec[:,1:] = np.rad2deg(coord_rec[:,1:])
-        
+               
         return coord_rec
             
                 
@@ -666,8 +662,8 @@ class StereoSpice:
         # If coordinates input as a list, then bung them into an array.
         if isinstance(coord_rec, list):
             if all([isinstance(c, (float, int)) for c in coord_rec]):
-                coord_src = np.array(coord_rec)
-                coord_src = np.squeeze(coord_rec)
+                coord_rec = np.array(coord_rec)
+                coord_rec = np.squeeze(coord_rec)
             else:
                 print("ERROR: coord_src should be a numpy array of coordinates or a list of floats.")
             
@@ -690,7 +686,7 @@ class StereoSpice:
             # Loop through state to do conversion (as spice.reclat doesn't handle arrays yet)
             coord_lat = np.zeros(coord_rec.shape, dtype=float)
             for i in range(n_coords):
-                coord_lat[i,:] = spice.reclat(coord_lat[i,:])
+                coord_lat[i,:] = spice.reclat(coord_rec[i,:])
         
         if degrees:
             coord_lat[:,1:] = np.rad2deg(coord_lat[:,1:])
@@ -794,6 +790,8 @@ class StereoSpice:
         # If no velocity, use spkpos.
         if no_velocity:
             state, ltime = spice.spkpos(target, et, frame, corr, observatory)
+            # Convert state from list of arrays to numpy array
+            state = np.array(state)
         else:
             # Velocity requested. This needs spkezr, which only accepts floats. So loop through et and call spkezr for            
             state = np.zeros((dates.size, 6), dtype=float)
@@ -821,9 +819,9 @@ class StereoSpice:
 
                 ltime[idt] = -1
 
-                # Now convert updatesd coords from HAE to specified system
+            # Now convert updatesd coords from HAE to specified system
             temp = state[:, id_gt_mxt]
-            # temp = convert_stereo_coord(dates.isot[id_gt_mxt],temp,'HAE',system)
+            temp = convert_stereo_coord(dates.isot[id_gt_mxt], temp, 'HAE', system)
             state[:, id_gt_mxt] = temp
         
         # If only one date, loose first dimension
