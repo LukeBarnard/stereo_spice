@@ -15,6 +15,7 @@ class StereoSpice:
 
         self.__load_stereo_kernals__()
         return
+        
 
     def __get_spice_range__(self, filename):
         """
@@ -62,6 +63,7 @@ class StereoSpice:
         max_time = max([max(t) for t in times])
         dates_max = Time(spice.et2utc(max_time, 'ISOC', 3))
         return dates_min, dates_max, craft_ids
+        
 
     def __get_kernal_files__(self):
         """
@@ -92,6 +94,7 @@ class StereoSpice:
             kernals_dict = {}
 
         return kernals_dict
+        
 
     def __load_general_kernals__(self):
         """
@@ -131,6 +134,7 @@ class StereoSpice:
         self.__stbclock__ = kernals_dict['stb_clock']
 
         return
+        
 
     def __load_stereo_kernals__(self):
         """
@@ -593,6 +597,7 @@ class StereoSpice:
             coord_dst = np.hstack((rad_dst, lon_dst, lat_dst))
 
         return coord_dst
+        
     
     def convert_lat2rec(self, coord_lat, degrees=True):
         """
@@ -689,9 +694,13 @@ class StereoSpice:
                 coord_lat[i,:] = spice.reclat(coord_rec[i,:])
         
         if degrees:
-            coord_lat[:,1:] = np.rad2deg(coord_lat[:,1:])
+            if n_coords == 1:
+                coord_lat[1:] = np.rad2deg(coord_lat[1:])
+            else:
+                coord_lat[:,1:] = np.rad2deg(coord_lat[:,1:])
         
         return coord_lat
+        
     
     def get_naif_body_code(self, body):
         """
@@ -734,6 +743,7 @@ class StereoSpice:
             naif_body = 'ERROR'
 
         return naif_body
+        
 
     def get_coord(self, dates, target, system, observatory=None, corr='NONE', precess=False, return_ltime=False,
                   no_velocity=False):
@@ -832,6 +842,7 @@ class StereoSpice:
             return state, ltime
         else:
             return state
+            
 
     def get_lonlat(self, dates, target, system, observatory=None, corr='NONE', precess=False, degrees=True):
         """
@@ -914,6 +925,7 @@ class StereoSpice:
             lat = np.expand_dims(lat, axis=1)
             coords = np.hstack((rad,lon,lat))
         return coords
+        
 
     def get_system_frame_names(self, system, observatory=None, precess=False):
         """
@@ -1038,6 +1050,7 @@ class StereoSpice:
             print("ERROR: System not recognised")
 
         return frame, observatory
+        
 
     def clear_kernals(self):
         """
