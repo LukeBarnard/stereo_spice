@@ -37,6 +37,6 @@ setup(name='stereo_spice',
       author_email='l.a.barnard@reading.ac.uk',
       packages=['stereo_spice'],
       package_data={'stereo_spice': data_file_list()},
-      install_requires=['astropy', 'spiceypy', 'numpy'],
+      install_requires=['astropy>=4.0', 'spiceypy>=2.3.0', 'numpy>=1.18.1'],
       include_package_data=True,
       zip_safe=False)
