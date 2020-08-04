@@ -1,1 +1,1 @@
-import coordinates
+import stereo_spice.coordinates

@@ -85,7 +85,7 @@ class StereoSpice:
                     kernals_dict[name] = abs_path
 
             # Check that each file exists.
-            for k, f in kernals_dict.iteritems():
+            for k, f in kernals_dict.items():
                 
                 if not os.path.exists(f):
                     print("Error: {} kernal file/file-list not found".format(k))
@@ -736,7 +736,7 @@ class StereoSpice:
         elif body in mars_names:
             naif_body = '499'
         else:
-            print body
+            print(body)
             print('ERROR: Body name not recognised. Allowed bodies: STA, STB, Sun, Mercury, Venus, Earth, Moon, Mars.\n\
                   More codes available at Get more codes at http://naif.jpl.nasa.gov/pub/naif/toolkit_docs/FORTRAN/req/naif_ids.html ')
             
