@@ -707,8 +707,8 @@ class StereoSpice:
         earth_names = {'E', 'Earth', 'earth', 'EARTH', 'ERT', 'ert', '399', 399}
         moon_names = {'Moon', 'moon', 'Moon', '301', 301}
         mars_names = {'Mars', 'mars', 'MARS', '499', 499}
-        jupiter_names = {'Jupiter', 'jupiter', 'JUPITER', '599', 599}
-        saturn_names = {'Saturn', 'saturn', 'SATURN', '699', 699}
+        jupiter_names = {'Jupiter', 'jupiter', 'JUPITER', '5', 5}
+        saturn_names = {'Saturn', 'saturn', 'SATURN', '6', 6}
 
         # Get NAIF code of user input observatory
         if body in sta_names:
@@ -728,9 +728,9 @@ class StereoSpice:
         elif body in mars_names:
             naif_body = '499'
         elif body in jupiter_names:
-            naif_body = '599'
+            naif_body = '5'
         elif body in saturn_names:
-            naif_body = '699'
+            naif_body = '6'
         else:
             print(body)
             print('ERROR: Body name not recognised. Allowed bodies: STA, STB, Sun, Mercury, Venus, Earth, Moon, Mars.\n\
