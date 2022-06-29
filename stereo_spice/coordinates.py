@@ -15,7 +15,6 @@ class StereoSpice:
 
         self.__load_stereo_kernals__()
         return
-        
 
     def __get_spice_range__(self, filename):
         """
@@ -45,7 +44,7 @@ class StereoSpice:
                 try:
                     print('spice.ckcov: compute segment')
                     spice.ckcov(filename, s, False, 'segment', 0.0, 'TDB', cover)
-                except:
+                except Exception:
                     print('spice.ckcov: compute interval')
                     spice.ckcov(filename, s, False, 'interval', 0.0, 'TDB', cover)
 
@@ -63,7 +62,6 @@ class StereoSpice:
         max_time = max([max(t) for t in times])
         dates_max = Time(spice.et2utc(max_time, 'ISOC', 3))
         return dates_min, dates_max, craft_ids
-        
 
     def __get_kernal_files__(self):
         """
@@ -71,16 +69,16 @@ class StereoSpice:
         :return kernals_dict: Dictionary containing the full paths to the kernal files needed.
         """
 
-        root  = os.path.abspath(os.path.dirname(__file__))
-        kernal_files = os.path.join(root,'config.dat')
+        root = os.path.abspath(os.path.dirname(__file__))
+        kernal_files = os.path.join(root, 'config.dat')
         
         if os.path.exists(kernal_files):
 
             with open(kernal_files, "r") as f:
                 kernals_dict = {}
                 lines = f.read().splitlines()
-                for l in lines:
-                    name, rel_path = l.split(';')
+                for ln in lines:
+                    name, rel_path = ln.split(';')
                     abs_path = os.path.join(root, rel_path)
                     kernals_dict[name] = abs_path
 
@@ -94,7 +92,6 @@ class StereoSpice:
             kernals_dict = {}
 
         return kernals_dict
-        
 
     def __load_general_kernals__(self):
         """
@@ -134,7 +131,6 @@ class StereoSpice:
         self.__stbclock__ = kernals_dict['stb_clock']
 
         return
-        
 
     def __load_stereo_kernals__(self):
         """
@@ -146,7 +142,7 @@ class StereoSpice:
         # Load in the predicted ephemeris, and collect all ephem files.
         # >> Initialise record of maximum dates covered by the ephemeris
         self.__PredMaxdates__ = {'sta': Time(0.0, format='jd'),
-                                'stb': Time(0.0, format='jd')}
+                                 'stb': Time(0.0, format='jd')}
 
         # >> Initialise the conic to cover the predicted ephemeris outside covered range
         self.__PredConic__ = {'sta': None, 'stb': None}
@@ -178,7 +174,7 @@ class StereoSpice:
         # Load in the definitive ephemeris, and collect all ephem files.
         # >> Initialise record of maximum dates covered by the ephemeris
         self.__DefMaxdates__ = {'sta': Time(0.0, format='jd'),
-                               'stb': Time(0.0, format='jd')}
+                                'stb': Time(0.0, format='jd')}
 
         # >> Initialise the conic to cover the predicted ephemeris outside covered range
         self.__DefConic__ = {'sta': None, 'stb': None}
@@ -209,8 +205,7 @@ class StereoSpice:
         # TODO: Load in Attitude kernals if want to use CMAT stuff?
 
         return
-    
-    
+
     def convert_hpc_to_hpr(self, hpc_lon, hpc_lat, degrees=True):
         """
         Function to convert helioprojective cartesian coordinates (longitudes and latitudes) into helioprojective radial
@@ -227,7 +222,7 @@ class StereoSpice:
             hpc_lat = np.deg2rad(hpc_lat)
             
         # Elongation calc:
-        # Get numerator and denomenator for atan2 calculation
+        # Get numerator and denominator for atan2 calculation
         btm = np.cos(hpc_lat) * np.cos(hpc_lon)
         top = np.sqrt((np.cos(hpc_lat) ** 2) * (np.sin(hpc_lon) ** 2) + (np.sin(hpc_lat) ** 2))
         hpr_el = np.arctan2(top, btm)
@@ -248,8 +243,7 @@ class StereoSpice:
             hpr_pa = np.rad2deg(hpr_pa)
             
         return hpr_el, hpr_pa
-        
-        
+
     def convert_hpr_to_hpc(self, hpr_el, hpr_pa, degrees=True):
         """
         Function to convert helioprojective radial coordinates (elongations and position angles) into helioprojective
@@ -278,10 +272,10 @@ class StereoSpice:
             
         return hpc_lon, hpc_lat
 
-        
     def convert_hpc_to_rtn(self, hpc_lon, hpc_lat, degrees=True):
         """
-        Function to convert helioprojective cartesian coordinates (longitudes and latitudes) into RTN longitude and latitudes.
+        Function to convert helioprojective cartesian coordinates (longitudes and latitudes) into RTN longitude and
+        latitudes.
         :param hpc_lon: Float or array of HPC longitudes, in degrees.
         :param hpc_lat: Float or array of HPC latitudes, in degrees.
         :param degrees: Boolean, if True (default), angles are parsed and returned in degrees.
@@ -299,23 +293,23 @@ class StereoSpice:
             rtn_lon = np.rad2deg(rtn_lon)
             
         return rtn_lon, rtn_lat
-    
-    
+
     def convert_rtn_to_hpc(self, rtn_lon, rtn_lat, degrees=True):
         """
-        Function to convert helioprojective cartesian coordinates (longitudes and latitudes) into RTN longitude and latitudes.
-        :param hpc_lon: Float or array of HPC longitudes, in degrees.
-        :param hpc_lat: Float or array of HPC latitudes, in degrees.
+        Function to convert helioprojective cartesian coordinates (longitudes and latitudes) into RTN longitude and
+        latitudes.
+        :param rtn_lon: Float or array of RTN longitudes, in degrees.
+        :param rtn_lat: Float or array of RTN latitudes, in degrees.
         :param degrees: Boolean, if True (default), angles are parsed and returned in degrees.
-        :return rtn_lon: Float or array of RTN longitudes, in degrees.
-        :return rtn_lat: Float or array of RTN latitudes, in degrees.
+        :return hpc_lon: Float or array of HPC longitudes, in degrees.
+        :return hpc_lat: Float or array of HPC latitudes, in degrees.
         """
         hpc_lat = rtn_lat
         
         if degrees:
             rtn_lon = np.deg2rad(rtn_lon)
             
-        if isinstance(rtn_lon,float):
+        if isinstance(rtn_lon, float):
             hpc_lon = np.pi - rtn_lon
             if hpc_lon > np.pi:
                 hpc_lon -= 2*np.pi
@@ -337,12 +331,12 @@ class StereoSpice:
         
         return hpc_lon, hpc_lat
 
-        
     def convert_coord(self, dates, coord_src, system_src, system_dst, observe_src=None, observe_dst=None, precess=False):
         """
         Function to convert coordinates betwen different reference frames.
         :param dates: Astropy time object of dates(s).
-        :param coord_src: Array of coordinates to convert. Should be len(dates)*3 for positions only, or len(dates)*6 for full state
+        :param coord_src: Array of coordinates to convert. Should be len(dates)*3 for positions only, or len(dates)*6
+                          for full state
         :param system_src: String name of coordinate system of coord array.
         :param system_dst: String name of coordinate system to transform coord array to.
         :param observe_src: String name of observatory for origin of system from. Only needed for some systems.
@@ -414,7 +408,7 @@ class StereoSpice:
             if no_velocity:
                 observe_src_state, ltime = spice.spkpos(observe_dst, et, frame_src, corr, observe_src)
             else:
-                # Velocity requested. This needs spkezr, which only accepts floats. So loop through et and call spkezr for
+                # Velocity requested. This needs spkezr, which only accepts floats. So loop et and call spkezr for
                 #  each et. Preallocate state and ltime, in this case state is a len(et)x6 array.
                 if dates.isscalar:
                     observe_src_state, ltime = spice.spkezr(observe_dst, et, frame_src, corr, observe_src)
@@ -448,11 +442,10 @@ class StereoSpice:
                 else:
                     transform = spice.sxform(frame_src, frame_dst, et[i])
                 
-                coord_dst[i, :] = np.matmul(transform, coord_src[i,:])
+                coord_dst[i, :] = np.matmul(transform, coord_src[i, :])
         
         return coord_dst
-        
-    
+
     def convert_lonlat(self, dates, coord_src, system_src, system_dst, observe_src=None, observe_dst=None, degrees=True):
         """
         Function to convert latitudinal coordinates betwen different reference 
@@ -506,9 +499,9 @@ class StereoSpice:
             lon = coord_src[1]
             lat = coord_src[2]
         else:
-            rad = np.squeeze(coord_src[:,0])
-            lon = np.squeeze(coord_src[:,1])
-            lat = np.squeeze(coord_src[:,2])
+            rad = np.squeeze(coord_src[:, 0])
+            lon = np.squeeze(coord_src[:, 1])
+            lat = np.squeeze(coord_src[:, 2])
         
         # Put angles into radians for spice.
         if degrees:
@@ -532,7 +525,7 @@ class StereoSpice:
             # Loop through state to do conversion (as spice.reclat doesn't handle arrays yet)
             coord_src_rec = np.zeros(coord_src.shape, dtype=float)
             for i in range(dates.size):
-                coord_src_rec[i,:] = spice.latrec(rad[i], lon[i], lat[i])
+                coord_src_rec[i, :] = spice.latrec(rad[i], lon[i], lat[i])
     
         # If system_dst was HPC or HPR, do conversion in RTN and apply correction.
         if system_dst in ['HPC', 'hpc']:
@@ -547,8 +540,7 @@ class StereoSpice:
         else:
             calc_hpr = False
         
-        coord_dst_rec = self.convert_coord(dates, coord_src_rec, system_src, \
-                                           system_dst, observe_src=observe_src, \
+        coord_dst_rec = self.convert_coord(dates, coord_src_rec, system_src, system_dst, observe_src=observe_src,
                                            observe_dst=observe_dst)
                                            
         # Convert back to latitude coords.
@@ -560,7 +552,7 @@ class StereoSpice:
             lon_dst = np.zeros(dates.size, dtype=float)
             lat_dst = np.zeros(dates.size, dtype=float)
             for i in range(dates.size):
-                rad_dst[i], lon_dst[i], lat_dst[i] = spice.reclat(coord_dst_rec[i,:])
+                rad_dst[i], lon_dst[i], lat_dst[i] = spice.reclat(coord_dst_rec[i, :])
 
         # Correct HPC coords if necessary
         if calc_hpc:
@@ -597,8 +589,7 @@ class StereoSpice:
             coord_dst = np.hstack((rad_dst, lon_dst, lat_dst))
 
         return coord_dst
-        
-    
+
     def convert_lat2rec(self, coord_lat, degrees=True):
         """
         Function to convert latitudinal coordinates to rectangular coordinates.
@@ -634,9 +625,9 @@ class StereoSpice:
             lon = coord_lat[1]
             lat = coord_lat[2]
         else:
-            rad = np.squeeze(coord_lat[:,0])
-            lon = np.squeeze(coord_lat[:,1])
-            lat = np.squeeze(coord_lat[:,2])
+            rad = np.squeeze(coord_lat[:, 0])
+            lon = np.squeeze(coord_lat[:, 1])
+            lat = np.squeeze(coord_lat[:, 2])
         
         # Put angles into radians for spice.
         if degrees:
@@ -650,11 +641,10 @@ class StereoSpice:
             # Loop through state to do conversion (as spice.reclat doesn't handle arrays yet)
             coord_rec = np.zeros(coord_lat.shape, dtype=float)
             for i in range(n_coords):
-                coord_rec[i,:] = spice.latrec(rad[i], lon[i], lat[i])
+                coord_rec[i, :] = spice.latrec(rad[i], lon[i], lat[i])
                
         return coord_rec
-            
-                
+
     def convert_rec2lat(self, coord_rec, degrees=True):
         """
         Function to convert rectangular coordinates to latitudinal coordinates.
@@ -691,17 +681,16 @@ class StereoSpice:
             # Loop through state to do conversion (as spice.reclat doesn't handle arrays yet)
             coord_lat = np.zeros(coord_rec.shape, dtype=float)
             for i in range(n_coords):
-                coord_lat[i,:] = spice.reclat(coord_rec[i,:])
+                coord_lat[i, :] = spice.reclat(coord_rec[i, :])
         
         if degrees:
             if n_coords == 1:
                 coord_lat[1:] = np.rad2deg(coord_lat[1:])
             else:
-                coord_lat[:,1:] = np.rad2deg(coord_lat[:,1:])
+                coord_lat[:, 1:] = np.rad2deg(coord_lat[:, 1:])
         
         return coord_lat
-        
-    
+
     def get_naif_body_code(self, body):
         """
         Function to return the numeric NAIF body code of a spacecraft or solar system body.
@@ -715,9 +704,12 @@ class StereoSpice:
         sun_names = {'S', 'Sun', 'sun', 'SUN', '10', 10}
         mercury_names = {'Mercury', 'mercury', 'MERCURY', '199', 199}
         venus_names = {'Venus', 'venus', 'VENUS', '299', 299}
-        earth_names = {'E','Earth', 'earth', 'EARTH', 'ERT', 'ert', '399', 399}
+        earth_names = {'E', 'Earth', 'earth', 'EARTH', 'ERT', 'ert', '399', 399}
         moon_names = {'Moon', 'moon', 'Moon', '301', 301}
         mars_names = {'Mars', 'mars', 'MARS', '499', 499}
+        jupiter_names = {'Jupiter', 'jupiter', 'JUPITER', '599', 599}
+        saturn_names = {'Saturn', 'saturn', 'SATURN', '699', 699}
+
         # Get NAIF code of user input observatory
         if body in sta_names:
             naif_body = '-234'
@@ -735,15 +727,19 @@ class StereoSpice:
             naif_body = '301'
         elif body in mars_names:
             naif_body = '499'
+        elif body in jupiter_names:
+            naif_body = '599'
+        elif body in saturn_names:
+            naif_body = '699'
         else:
             print(body)
             print('ERROR: Body name not recognised. Allowed bodies: STA, STB, Sun, Mercury, Venus, Earth, Moon, Mars.\n\
-                  More codes available at Get more codes at http://naif.jpl.nasa.gov/pub/naif/toolkit_docs/FORTRAN/req/naif_ids.html ')
+                  More codes available at Get more codes at:\n\
+                  http://naif.jpl.nasa.gov/pub/naif/toolkit_docs/FORTRAN/req/naif_ids.html')
             
             naif_body = 'ERROR'
 
         return naif_body
-        
 
     def get_coord(self, dates, target, system, observatory=None, corr='NONE', precess=False, return_ltime=False,
                   no_velocity=False):
@@ -817,7 +813,6 @@ class StereoSpice:
             elif observatory == stb_naif_code:
                 elts = self.__PredConic__['stb']
 
-        
             for idt in np.argwhere(id_gt_mxt is True):
                 et = spice.str2et(dates.isot[idt])
                 temp = spice.conics(elts, et)
@@ -842,7 +837,6 @@ class StereoSpice:
             return state, ltime
         else:
             return state
-            
 
     def get_lonlat(self, dates, target, system, observatory=None, corr='NONE', precess=False, degrees=True):
         """
@@ -872,11 +866,10 @@ class StereoSpice:
         else:
             calc_hpr = False
             
-        # Get the position of the target for this dates/system/observatory
+        # Get the position of the target for these dates/system/observatory
         state = self.get_coord(dates, target, system=system, observatory=observatory, corr=corr, precess=precess,
                                no_velocity=True)
-		
-		
+
         # Use spice to convert to lon/lat
         state = np.array(state)
         
@@ -916,23 +909,22 @@ class StereoSpice:
 
         # Make state vector with same structure as output by spkpos
         if dates.isscalar:
-            coords = np.array([rad,lon,lat]).T
+            coords = np.array([rad, lon, lat]).T
             # If only one date, loose first dimension
             coords = np.squeeze(coords)
         else:
             rad = np.expand_dims(rad, axis=1)
             lon = np.expand_dims(lon, axis=1)
             lat = np.expand_dims(lat, axis=1)
-            coords = np.hstack((rad,lon,lat))
+            coords = np.hstack((rad, lon, lat))
         return coords
-        
 
     def get_system_frame_names(self, system, observatory=None, precess=False):
         """
         Function to return the spice friendly name of the frame relevant for a given coordinate system and observatory.
         For some systems, an observatory must also be specified.
         :param system: String name of the requested coordinate system.
-        :param observatory: String name of observatory. Not needed for all systems (e.g HCI or GEO).
+        :param observatory: String name of observatory. Not needed for all systems (e.g. HCI or GEO).
         :param precess: Boolean. If true select frame that accounts for precession.
         :return frame: String name of frame in spice friendly format.
         :return observatory: String of observatory in spice friendly format.
@@ -949,7 +941,7 @@ class StereoSpice:
             observatory = self.get_naif_body_code(observatory)
          
         # Get lists of system names and their synonyms
-        heeq_names = ['HEQ','HEEQ', 'heq', 'heeq']
+        heeq_names = ['HEQ', 'HEEQ', 'heq', 'heeq']
         carrington_names = ['CARR', 'CARRINGTON', 'carr', 'carrington']
         hci_names = ['HCI', 'hci']
         hae_names = ['HAE', 'hae']
@@ -1014,8 +1006,8 @@ class StereoSpice:
                 frame = 'HGRTN'
         
         elif system in hgrtn_names:
-                frame = 'HGRTN'
-                observatory = 'Sun'
+            frame = 'HGRTN'
+            observatory = 'Sun'
 
         elif system in sci_names:
             # Check observaotry input
@@ -1050,7 +1042,6 @@ class StereoSpice:
             print("ERROR: System not recognised")
 
         return frame, observatory
-        
 
     def clear_kernals(self):
         """
